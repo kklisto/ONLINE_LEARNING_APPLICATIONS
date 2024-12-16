@@ -137,13 +137,13 @@ class MultiplicativePacingAgent:
                             a_min=0, a_max=1/self.rho)
         self.budget -= c_t
 
+
 class UCBSecondPriceAuctionAgent:
-    def __init__(self, valuation, budget, T, K, eta):
-        self.valuation = valuation
+    def __init__(self, budget, T, K, alpha):
         self.budget = budget
+        self.alpha = alpha
         self.T = T
         self.K = K
-        self.eta = eta
         self.prices = np.linspace(0, 1, K)
         self.average_rewards = np.zeros(K)
         self.N_pulls = np.zeros(K)
@@ -155,7 +155,7 @@ class UCBSecondPriceAuctionAgent:
         elif self.t < self.K:
             return self.t
         else:
-            ucbs = self.average_rewards + np.sqrt(2 * np.log(self.T) / (self.N_pulls + 1e-10))
+            ucbs = self.average_rewards + self.alpha * np.sqrt(2 * np.log(self.T) / (self.N_pulls + 1e-10))
             return np.argmax(ucbs)
 
     def update(self, arm, reward, payment):
@@ -163,4 +163,3 @@ class UCBSecondPriceAuctionAgent:
         self.average_rewards[arm] += (reward - self.average_rewards[arm]) / self.N_pulls[arm]
         self.t += 1
         self.budget -= payment  # Subtract the actual payment from the budget
-

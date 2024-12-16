@@ -115,6 +115,22 @@ class UCB1Agent:
         self.N_pulls[self.a_t] += 1
         self.average_rewards[self.a_t] += (r_t - self.average_rewards[self.a_t])/self.N_pulls[self.a_t]
         self.t += 1
+
+class NonstationaryPricingEnv:
+    def __init__(self, mu, prices, cost, T, seed):
+        np.random.seed(seed)
+        self.mu = np.array(mu)
+        self.cost = cost
+        self.prices = prices
+        self.rewards = np.random.binomial(n=1, p=self.mu)*(prices-cost)
+        self.t = 0
+
+    def round(self, a_t):
+        r_t = self.rewards[self.t, a_t]
+        self.t +=1
+        return r_t
+    
+
         
 
         
